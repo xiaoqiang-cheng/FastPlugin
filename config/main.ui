@@ -26,11 +26,28 @@
      <property name="title">
       <string>View</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QWebView" name="plugin_webView">
+        <property name="url">
+         <url>
+          <string>https://www.baidu.com/</string>
+         </url>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header location="global">QtWebKitWidgets/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
