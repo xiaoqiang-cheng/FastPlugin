@@ -1,7 +1,9 @@
 import netron
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QSplitter, QTreeWidgetItem, QCheckBox
+from PySide2.QtWidgets import QApplication, QSplitter, QTreeWidgetItem, QCheckBox, QVBoxLayout, QHBoxLayout
 from PySide2.QtCore import QTimer, Qt, QModelIndex, QUrl
+from PySide2.QtWebEngineWidgets import QWebEnginePage
+from PySide2.QtWebEngineWidgets import QWebEngineView
 
 class View():
     '''
@@ -9,13 +11,38 @@ class View():
     '''
     def __init__(self):
         self.ui = QUiLoader().load('config/main.ui')
-        ret = netron.start("/home/cxq/Develop/lab_code/FastPlugin/plugin.onnx", browse=False)
-        url = "http://%s:%s"%(ret[0],ret[1])
-        print(url)
-        self.ui.plugin_webView.load(QUrl(url))
-        self.ui.plugin_webView.show()
-        # self.ui.plugin_webView.load("https://baidu.com")
+        self.webview_plugin = QWebEngineView()
+        self.ui.groupBox_2.layout().addWidget(self.webview_plugin)
+        self.spliter_dict = {}
 
+        self.set_qspilter("main_form",
+                            Qt.Horizontal,
+                            [self.ui.groupBox, self.ui.groupBox_2],
+                            [1, 5],
+                            self.ui.central_widget.layout())
+        # self.show_plugin_in_netron("/home/cxq/Develop/lab_code/FastPlugin/plugin.onnx")
+
+    def set_qspilter(self, spliter_name,
+                            spliter_dir,
+                            widget_list,
+                            factor_list,
+                            layout_set):
+        # Qt.Horizontal or v
+        self.spliter_dict[spliter_name] = QSplitter(spliter_dir)
+
+        for w in widget_list:
+            self.spliter_dict[spliter_name].addWidget(w)
+
+        for i, f in enumerate(factor_list):
+            self.spliter_dict[spliter_name].setStretchFactor(i, f)
+        layout_set.addWidget(self.spliter_dict[spliter_name])
+
+    def show_plugin_in_netron(self, plugin_path):
+        netron.stop()
+        ret = netron.start(plugin_path, browse=False)
+        url = "http://%s:%s"%(ret[0],ret[1])
+        self.webview_plugin.load(QUrl(url))
+        self.webview_plugin.show()
 
     def show(self):
         self.ui.show()
