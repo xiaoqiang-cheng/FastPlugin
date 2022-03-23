@@ -43,18 +43,35 @@ class ModelCenter(object):
         ret = self.torch_model(*inputs)
         return ret
 
-    def export_onnx(self, inputs, in_name, out_name):
-        print(tuple(inputs))
+    def export_onnx(self, inputs, in_name, out_name, onnx_out_path = "plugin.onnx"):
         torch.onnx.export(
             self.torch_model,
             tuple(inputs),
-            "plugin.onnx",
+            onnx_out_path,
             input_names = in_name,
             output_names = out_name,
             verbose = True,
-            opset_version = 9,
+            opset_version = 11,
             enable_onnx_checker = False
         )
+
+    def export_onnx_from_dict(self, onnx_out_path = "plugin.onnx"):
+        inputs_list = []
+        inputs_name = []
+
+        for key, result in global_setting["inputs"].items():
+            inputs_name.append(key)
+            inputs_list.append(torch.ones(result))
+
+        out_list = []
+        outs_name = []
+        for key, result in global_setting["outputs"].items():
+            outs_name.append(key)
+            out_list.append(torch.ones(result))
+
+        ret = self.run_model(inputs_list)
+        self.export_onnx(inputs_list, inputs_name, outs_name, onnx_out_path)
+
 
 if __name__=="__main__":
     obj = ModelCenter()

@@ -10,16 +10,17 @@ class View():
         mvc模式中的视图部分，本身不包含任何逻辑，仅作界面显示使用
     '''
     def __init__(self):
+        self.spliter_dict = {}
         self.ui = QUiLoader().load('config/main.ui')
+
         self.webview_plugin = QWebEngineView()
         self.ui.groupBox_2.layout().addWidget(self.webview_plugin)
-        self.spliter_dict = {}
 
         self.set_qspilter("main_form",
-                            Qt.Horizontal,
-                            [self.ui.groupBox, self.ui.groupBox_2],
-                            [1, 5],
-                            self.ui.central_widget.layout())
+                        Qt.Horizontal,
+                        [self.ui.groupBox, self.ui.groupBox_2],
+                        [2, 5],
+                        self.ui.central_widget.layout())
         # self.show_plugin_in_netron("/home/cxq/Develop/lab_code/FastPlugin/plugin.onnx")
 
     def set_qspilter(self, spliter_name,
@@ -40,9 +41,25 @@ class View():
     def show_plugin_in_netron(self, plugin_path):
         netron.stop()
         ret = netron.start(plugin_path, browse=False)
-        url = "http://%s:%s"%(ret[0],ret[1])
+        url = "http://%s:%s"%(ret[0], ret[1])
         self.webview_plugin.load(QUrl(url))
         self.webview_plugin.show()
+
+    def set_onnx_path(self, pathname):
+        self.ui.linetext_onnx_path.setText(pathname)
+
+
+    def get_plugin_name(self):
+        return self.ui.linetext_op_name.text()
+
+    def get_plugin_input(self):
+        return self.ui.text_input_shape.toPlainText()
+
+    def get_plugin_output(self):
+        return self.ui.text_output_shape.toPlainText()
+
+    def get_plugin_param(self):
+        return self.ui.text_param.toPlainText()
 
     def show(self):
         self.ui.show()
